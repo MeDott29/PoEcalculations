@@ -2,3 +2,7 @@ This is a repository I just started.
 It is meant for generating a function.
 The function must solve a problem by creating a graph.
 We will adjust the graph as needed.
+# ARPG Mechanics Update:
+• Added new ARPG mechanics to the project.
+• New calculations for synergy between projectile and target, as
+  described by the given ARPG game mechanics, can be found in 'arpg_mechanics.py'.
