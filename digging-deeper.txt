@@ -1,0 +1,12 @@
+we are developing functions for calculating effectiveness of a projectile hitting a target. the projectile and target are part of an ARPG game.
+
+The interaction we are interested in is the synergy between these two concepts
+
+-(20-40)% chance to gain a Frenzy Charge% chance to gain a Frenzy Charge for each Enemy you hit with a Critical Strike for each Enemy you hit with a Critical Strike
+
+-Lose all Frenzy Charges on reaching Maximum Frenzy Charges to make the next Bow Attack you perform fire that many additional Arrows
+
+we are looking to demonstrate the generation of additional arrows as a function of critical strike chance, hits, gain of frenzy charges over time
+
+values that will have to be calculated include
+bow attacks over time, arrows per bow attack, frenzy charges generated per attack
