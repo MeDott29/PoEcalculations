@@ -1,4 +1,5 @@
 import unittest
+import random
 
 from init import Projectile, Target
 
@@ -10,7 +11,15 @@ class ARPGMechanics:
         self.bow_speed = bow_speed
 
     def calculate_frenzy_charges(self, crit_hits):
-        return crit_hits * (0.2 - 0.4)
+        
+        # Calculate frenzy charges based on crit hits with probabilistic gains
+        frenzy_charges = 0
+        for _ in range(crit_hits):
+            # 20-40% chance to gain a Frenzy Charge per critical hit
+            if random.random() < (0.2 + random.random() * 0.2):
+                frenzy_charges += 1
+        return frenzy_charges
+
 
     def calculate_arrows_per_attack(self, frenzy_charges):
         return 1 + frenzy_charges
@@ -18,11 +27,22 @@ class ARPGMechanics:
     def simulate_combat(self, time):
         arrows = 0
         frenzy_charges = 0
+        
         for _ in range(int(time * self.bow_speed)):
             crit_hits = self.crit_chance
             frenzy_charges += self.calculate_frenzy_charges(crit_hits)
-            frenzy_charges = min(frenzy_charges, self.max_frenzy)
+            # Check if maximum Frenzy Charges have been accumulated
+            if frenzy_charges >= self.max_frenzy:
+                # Extra arrows are fired due to using all Frenzy Charges
+                arrows += self.calculate_arrows_per_attack(frenzy_charges)
+                # Reset frenzy charges after using them for extra attack
+                frenzy_charges = 0
+            else:
+                # Update Frenzy Charges if not at max
+                frenzy_charges = min(frenzy_charges, self.max_frenzy)
+            # Arrows from regular attack
             arrows += self.calculate_arrows_per_attack(frenzy_charges)
+        return arrows, frenzy_charges
         return arrows, frenzy_charges
 
 class TestARPGMechanics(unittest.TestCase):
