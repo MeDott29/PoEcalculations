@@ -1,43 +1,68 @@
-import unittest
+# Helper functions for code modification. Run exec() on this file to load the functions into memory.
+import ast
+import difflib
 
-from init import Projectile, Target
+file_path = '/mnt/data/file-dv55U9OWyTNM7SWuCTPvBMve'
+with open(file_path, 'r') as file:
+    file_content = file.read()
+original_lines = file_content.splitlines()
+current_content = file_content
 
+def print_original_lines(i, j):
+    """
+    Displays the original lines between line numbers i and j.
+    """
+    start = max(0, i - 10)
+    end = min(len(original_lines), j + 10)
 
-class ARPGMechanics:
-    def __init__(self, crit_chance, max_frenzy, bow_speed):
-        self.crit_chance = crit_chance
-        self.max_frenzy = max_frenzy
-        self.bow_speed = bow_speed
+    for index in range(start, end):
+        if index == i:
+            print("\n--- Start of snippet ---")
+        elif index == j:
+            print("--- End of snippet ---\n")
 
-    def calculate_frenzy_charges(self, crit_hits):
-        return crit_hits * (0.2 - 0.4)
+        print(f"{index}: {original_lines[index]}")
+    print("\n")
 
-    def calculate_arrows_per_attack(self, frenzy_charges):
-        return 1 + frenzy_charges
+def print_original_lines_with_keywords(keywords):
+    """
+    Displays the original lines between line numbers i and j when any of the keywords are found.
+    Use single words.
+    """
+    context = 10
 
-    def simulate_combat(self, time):
-        arrows = 0
-        frenzy_charges = 0
-        for _ in range(int(time * self.bow_speed)):
-            crit_hits = self.crit_chance
-            frenzy_charges += self.calculate_frenzy_charges(crit_hits)
-            frenzy_charges = min(frenzy_charges, self.max_frenzy)
-            arrows += self.calculate_arrows_per_attack(frenzy_charges)
-        return arrows, frenzy_charges
+    matches = [i for i, line in enumerate(original_lines) if any(keyword in line.lower() for keyword in keywords)]
+    expanded_matches = set()
 
-class TestARPGMechanics(unittest.TestCase):
-    def setUp(self):
-        self.arpg = ARPGMechanics(0.5, 5, 1)
+    for match in matches:
+        start = max(0, match - context)
+        end = min(len(original_lines), match + context + 1)
+        for i in range(start, end):
+            expanded_matches.add(i)
 
-    def test_calculate_frenzy_charges(self):
-        self.assertEqual(self.arpg.calculate_frenzy_charges(2), 0.4)
+    for i in sorted(expanded_matches):
+        print(f"{i}: {original_lines[i]}")
 
-    def test_calculate_frenzy_charges_zero(self):
-        self.assertEqual(self.arpg.calculate_frenzy_charges(0), 0, "Frenzy charges should be zero with zero crit hits.")
+def check_valid_python(code):
+    """
+    Check if the code is valid python using ast.parse. Use this to check if python code is valid after making edits.
+    """
+    try:
+        # Check for valid python
+        ast.parse(code)
+        print("Python code is valid.")
+    except SyntaxError as e:
+        print("SyntaxError:", e)
 
-    def test_calculate_frenzy_charges_negative(self):
-        self.assertEqual(self.arpg.calculate_frenzy_charges(-1), -0.2, "Frenzy charges should be negative with negative crit hits.")
-
+def print_diff(new_content, old_content=file_content, final_diff=False):
+    if new_content == old_content:
+        print("No changes were made. Please try again to produce a valid diff.")
+    unified_diff = difflib.unified_diff(
+        old_content.split("\n"), new_content.split("\n")
+    )
+    unified_diff_str = '\n'.join([diff_line.strip("\n") for diff_line in unified_diff])
+    if final_diff:
+        print(f"<final_diff>\n{unified_diff_str}\n
     def test_calculate_frenzy_charges_max_frenzy(self):
         excess_frenzy_charges = self.arpg.max_frenzy + 1
         self.assertEqual(self.arpg.calculate_frenzy_charges(excess_frenzy_charges), self.arpg.max_frenzy,
