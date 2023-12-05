@@ -2,14 +2,20 @@ import unittest
 
 from init import Projectile, Target
 
-
 class ARPGMechanics:
-    def __init__(self, crit_chance, max_frenzy, bow_speed):
+    def __init__(self, crit_chance, max_frenzy, bow_speed, num_enemies, bow, enemies):
         self.crit_chance = crit_chance
         self.max_frenzy = max_frenzy
         self.bow_speed = bow_speed
+        self.num_enemies = num_enemies
+        self.bow = bow
+        self.enemies = enemies
+        self.arrows_per_attack = 0
+        for enemy in self.enemies:
+            self.arrows_per_attack += self.calculate_arrows_per_attack(self.max_frenzy, enemy.size)
 
     def calculate_frenzy_charges(self, crit_hits):
+        return crit_hits * (0.2 - 0.4)
         return crit_hits * (0.2 - 0.4)
 
     def calculate_arrows_per_attack(self, frenzy_charges):
